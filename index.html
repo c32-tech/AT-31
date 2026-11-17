@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Material Menor - Móvil AT-31</title>
+  <style>
+    :root {
+      --celeste-principal: #0ea5e9;
+      --celeste-oscuro: #0369a1;
+      --celeste-medio: #38bdf8;
+      --celeste-suave: #e0f2fe;
+      --celeste-fondo: #f0f9ff;
+      --accent-amarillo: #facc15;
+      --dark: #0f172a;
+      --card: #ffffff;
+      --border: #bae6fd;
+      --si-color: #16a34a;
+      --no-color: #dc2626;
+      --na-color: #64748b;
+    }
+
+    * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--celeste-fondo); color: var(--dark); margin: 0; padding: 16px; }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #ffffff 0%, var(--celeste-suave) 100%);
+      border-top: 6px solid var(--celeste-principal);
+      border-bottom: 4px solid var(--accent-amarillo);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.12);
+      margin-bottom: 20px;
+    }
+    .header img { width: 85px; height: auto; object-fit: contain; }
+    .header-text h1 { margin: 0; font-size: 1.25rem; color: var(--celeste-oscuro); text-transform: uppercase; }
+    .header-text h2 { margin: 4px 0; font-size: 1rem; color: #0284c7; }
+    .header-text .badge {
+      display: inline-block;
+      background: var(--celeste-oscuro);
+      color: #ffffff;
+      font-weight: bold;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-top: 6px;
+      border-left: 4px solid var(--accent-amarillo);
+    }
+
+    /* Datos de Guardia */
+    .meta-card {
+      background: var(--card);
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.08);
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; color: var(--celeste-oscuro); }
+    .form-group select, .form-group input[type="text"], .form-group input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: #f8fafc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group select:focus, .form-group input:focus, .obs-card textarea:focus {
+      outline: none;
+      border-color: var(--celeste-principal);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+      background-color: #ffffff;
+    }
+
+    /* Secciones del Checklist */
+    .section-card {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.08);
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .section-header {
+      background: linear-gradient(90deg, var(--celeste-oscuro) 0%, var(--celeste-principal) 100%);
+      color: #ffffff;
+      padding: 12px 16px;
+      font-weight: bold;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-header span.count {
+      background: rgba(255, 255, 255, 0.22);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 2fr auto 1.2fr;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-bottom: 1px solid #e0f2fe;
+      transition: background-color 0.2s;
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-row:nth-child(even) { background-color: #f4faff; }
+    .item-row.row-error {
+      background-color: #fef2f2 !important;
+      outline: 2px solid var(--no-color);
+      outline-offset: -2px;
+    }
+    .item-name { font-size: 0.95rem; font-weight: 500; color: #1e293b; }
+
+    /* Radio Buttons tipo Botón */
+    .radio-group { display: flex; gap: 6px; }
+    .radio-group label {
+      cursor: pointer;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      user-select: none;
+      transition: all 0.15s;
+      color: var(--celeste-oscuro);
+    }
+    .radio-group input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .radio-group label:has(input[value="SI"]:checked) { background: var(--si-color); border-color: var(--si-color); color: #fff; }
+    .radio-group label:has(input[value="NO"]:checked) { background: var(--no-color); border-color: var(--no-color); color: #fff; }
+    .radio-group label:has(input[value="N/A"]:checked) { background: var(--na-color); border-color: var(--na-color); color: #fff; }
+
+    .estado-input {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      background: #ffffff;
+    }
+
+    /* Observaciones */
+    .obs-card {
+      background: var(--card);
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.08);
+      margin-bottom: 24px;
+    }
+    .obs-card textarea {
+      width: 100%;
+      min-height: 110px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      resize: vertical;
+      background-color: #f8fafc;
+    }
+
+    /* Botón Enviar */
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn-submit {
+      flex: 1;
+      background: linear-gradient(135deg, var(--celeste-principal) 0%, var(--celeste-oscuro) 100%);
+      color: #fff;
+      border: none;
+      padding: 15px 24px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25);
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn-submit:hover { opacity: 0.95; }
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
+
+    /* Responsive móvil */
+    @media (max-width: 680px) {
+      .header { flex-direction: column; text-align: center; }
+      .item-row { grid-template-columns: 1fr; gap: 8px; }
+      .radio-group { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Encabezado -->
+  <div class="header">
+    <img src="logo.png" alt="Escudo Tercera Compañía Sajonia">
+    <div class="header-text">
+      <h1>Cuerpo de Bomberos Voluntarios del Paraguay</h1>
+      <h2>Tercera Compañía “Sajonia” - Incendio y Salvamento</h2>
+      <div class="badge">MÓVIL AT-31 • CONTROL DE MATERIAL MENOR</div>
+    </div>
+  </div>
+
+  <form id="checklistForm" novalidate>
+    <!-- Datos de Guardia y Encargado -->
+    <div class="meta-card">
+      <div class="form-group">
+        <label for="guardia">Guardia N° *</label>
+        <select id="guardia" required>
+          <option value="" disabled selected>Seleccione Guardia...</option>
+          <option value="1">Guardia 1</option>
+          <option value="2">Guardia 2</option>
+          <option value="3">Guardia 3</option>
+          <option value="4">Guardia 4</option>
+          <option value="5">Guardia 5</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="encargado">Encargado de Control de Móviles *</label>
+        <input type="text" id="encargado" placeholder="Nombre y Apellido / Código" required>
+      </div>
+      <div class="form-group">
+        <label for="fecha">Fecha *</label>
+        <input type="date" id="fecha" required>
+      </div>
+    </div>
+
+    <!-- Contenedor dinámico del Checklist -->
+    <div id="checklist-container"></div>
+
+    <!-- Observaciones / Daño -->
+    <div class="obs-card">
+      <div class="form-group">
+        <label for="observaciones">Observaciones / Daño:</label>
+        <textarea id="observaciones" placeholder="Ingrese aquí novedades, faltantes o daños detectados..."></textarea>
+      </div>
+    </div>
+
+    <!-- Botón Enviar -->
+    <div class="actions">
+      <button type="submit" class="btn-submit" id="btnSubmit">Guardar en Google Sheets y Enviar Reporte</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // URL de Google Apps Script configurada para el Móvil AT-31
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzu19f3VZ6uNPFmVmgESp0LK5D1Yt3TX_VyIP5gWQI5k76OrHd2gfg-aZ1XoxDLi5p/exec";
+
+  // Estructura exacta de la Hoja 2 del PDF CONTROL DE AT31: CONTROL DE MATERIAL MENOR
+  const seccionesChecklist = [
+    {
+        "titulo": "Persiana 1 lado conductor",
+        "items": [
+            "1 Manguerote p/ succión con filtro",
+            "1 Caja de herramientas",
+            "1 Bolsito rojo con cuerda",
+            "1 Turbobomba",
+            "1 Bolsón de kit de salto",
+            "1 Collarín chico",
+            "1 Collarín mediano",
+            "1 Collarín grande",
+            "1 Araña",
+            "1 Kit de toma presión",
+            "1 Torniquete",
+            "1 Termómetro digital",
+            "1 Manta térmica pediátrica",
+            "1 Manta térmica adulta",
+            "1 Paquete de baja lengua",
+            "12 Cánulas",
+            "1 Bolsa de reanimación (adulto)",
+            "1 Bolsa de reanimación (pediatra)",
+            "1 Mascarilla (pediátrico)",
+            "1 Mascarilla (adulto)",
+            "1 Mascarilla (lactante)",
+            "1 Esparadrapo",
+            "1 Paquete de gasas",
+            "1 Venda semi elástica",
+            "3 Venda elástica",
+            "4 Leukomed",
+            "2 Bata",
+            "1 Paquete de guantes",
+            "1 Paquete de tapabocas",
+            "1 Paquete de bolsas p/residuos",
+            "1 Dosificador con DG6",
+            "1 Suero 500ml"
+        ]
+    },
+    {
+        "titulo": "Persiana 2 lado conductor",
+        "items": [
+            "3 Manga de 100 FR",
+            "3 Manga de 50 Storz"
+        ]
+    },
+    {
+        "titulo": "Cajonera 2 lado conductor",
+        "items": [
+            "Filtro de manguerote"
+        ]
+    },
+    {
+        "titulo": "Parte superior del móvil",
+        "items": [
+            "1 Manguerote de 50",
+            "4 Manguerote de 100 Storz",
+            "1 Filtro para manguerote de 100",
+            "1 Pileta de 10000 litros con forro"
+        ]
+    },
+    {
+        "titulo": "Parte posterior del móvil",
+        "items": [
+            "1 Manguerín de alta presión",
+            "1 Manivela"
+        ]
+    },
+    {
+        "titulo": "Persiana 3 lado acompañante",
+        "items": [
+            "2 Mochilas ERA",
+            "2 Mascaras con malla y forro",
+            "2 Cilindro de reserva"
+        ]
+    },
+    {
+        "titulo": "Interior entre persianas 1 y 3",
+        "items": [
+            "2 Llave T",
+            "1 Pala",
+            "1 Barreta",
+            "1 Motobomba",
+            "1 Monitor",
+            "1 Enrollador de mangas",
+            "10 Cono",
+            "1 Taco escalonado",
+            "1 Manguerote para motobomba",
+            "1 Hacha",
+            "1 Lona de pileta"
+        ]
+    },
+    {
+        "titulo": "Persiana 4 lado acompañante",
+        "items": [
+            "3 Manga de 70 Storz",
+            "2 Manga de 70 FR p/recarga",
+            "1 Bifurca de 70",
+            "1 Bifurca de 50",
+            "1 Trifurca Storz",
+            "1 Pitón de 50 Storz",
+            "1 Pitón lanza de 50 Storz"
+        ]
+    },
+    {
+        "titulo": "Cajonera lado acompañante",
+        "items": [
+            "1 Codo de 70 Storz",
+            "1 Adaptador de 70 Storz a FR",
+            "1 Adaptador de 50 Storz a FR",
+            "1 Adaptador rosca gruesa Storz 50",
+            "1 Adaptador rosca gruesa Storz 70",
+            "1 Reductor 70/50 Storz",
+            "2 Llave Darling",
+            "2 Llave de manga",
+            "2 Tapa de hidrante"
+        ]
+    }
+];
+
+  // Establecer fecha actual por defecto
+  document.getElementById('fecha').valueAsDate = new Date();
+
+  // Renderizar secciones e ítems
+  const container = document.getElementById('checklist-container');
+  let itemGlobalIndex = 0;
+
+  seccionesChecklist.forEach((sec) => {
+    const card = document.createElement('div');
+    card.className = 'section-card';
+
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `<span>${sec.titulo}</span><span class="count">${sec.items.length} ítems</span>`;
+    card.appendChild(header);
+
+    const body = document.createElement('div');
+    sec.items.forEach((itemName) => {
+      const idx = itemGlobalIndex++;
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.dataset.seccion = sec.titulo;
+      row.dataset.nombre = itemName;
+
+      row.innerHTML = `
+        <div class="item-name">${itemName} *</div>
+        <div class="radio-group">
+          <label><input type="radio" name="chk_${idx}" value="SI" required><span>SI</span></label>
+          <label><input type="radio" name="chk_${idx}" value="NO" required><span>NO</span></label>
+          <label><input type="radio" name="chk_${idx}" value="N/A" required><span>N/A</span></label>
+        </div>
+        <input type="text" class="estado-input" placeholder="Estado / Detalle...">
+      `;
+
+      row.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => row.classList.remove('row-error'));
+      });
+
+      body.appendChild(row);
+    });
+
+    card.appendChild(body);
+    container.appendChild(card);
+  });
+
+  // Validación y envío del formulario
+  document.getElementById('checklistForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const guardiaEl = document.getElementById('guardia');
+    const encargadoEl = document.getElementById('encargado');
+    const fechaEl = document.getElementById('fecha');
+
+    if (!guardiaEl.value) {
+      alert("Por favor, seleccione el número de Guardia.");
+      guardiaEl.focus();
+      return;
+    }
+    if (!encargadoEl.value.trim()) {
+      alert("Por favor, ingrese el nombre del Encargado de Control de Móviles.");
+      encargadoEl.focus();
+      return;
+    }
+    if (!fechaEl.value) {
+      alert("Por favor, seleccione la Fecha del control.");
+      fechaEl.focus();
+      return;
+    }
+
+    const allRows = document.querySelectorAll('.item-row');
+    let firstMissingRow = null;
+    let missingCount = 0;
+
+    allRows.forEach(row => {
+      row.classList.remove('row-error');
+      const checkedRadio = row.querySelector('input[type="radio"]:checked');
+      if (!checkedRadio) {
+        row.classList.add('row-error');
+        missingCount++;
+        if (!firstMissingRow) {
+          firstMissingRow = row;
+        }
+      }
+    });
+
+    if (firstMissingRow) {
+      firstMissingRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      alert(`Faltan marcar ${missingCount} casilla(s) obligatoria(s). Complete todos los ítems resaltados en rojo antes de guardar.`);
+      return;
+    }
+
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.textContent = "Guardando y enviando...";
+
+    const itemsData = [];
+    allRows.forEach(row => {
+      const checkedRadio = row.querySelector('input[type="radio"]:checked');
+      const estadoVal = row.querySelector('.estado-input').value.trim();
+      itemsData.push({
+        seccion: row.dataset.seccion,
+        nombre: row.dataset.nombre,
+        valor: checkedRadio.value,
+        estado: estadoVal
+      });
+    });
+
+    const payload = {
+      guardia: guardiaEl.value,
+      encargado: encargadoEl.value.trim(),
+      fecha: fechaEl.value,
+      observaciones: document.getElementById('observaciones').value.trim(),
+      items: itemsData
+    };
+
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        alert("¡Control registrado exitosamente en Google Sheets!" + (result.emailSent ? " Se envió el correo con las novedades." : ""));
+        document.getElementById('checklistForm').reset();
+        document.getElementById('fecha').valueAsDate = new Date();
+      } else {
+        alert("Error desde Google Sheets: " + (result.message || "Error desconocido"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo conectar con Google Apps Script. Verifica que la implementación tenga acceso para 'Cualquier usuario' y que la URL sea correcta.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Guardar en Google Sheets y Enviar Reporte";
+    }
+  });
+</script>
+
+</body>
+</html>
